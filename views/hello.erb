@@ -35,7 +35,7 @@
           </tr>
        </thead>
        <tbody>
-          <% @today.each do |task| %>
+          <% @tasks[:today].each do |task| %>
             <tr class="task">
                <td class="state"><div class="box"><%= task['state'] %></div></td>
                <th class="name <% if task[:state] == '✕' %>canceled<% end %>"><%= task['name'] %></th>
@@ -69,7 +69,7 @@
           </tr>
        </thead>
        <tbody>
-          <% @later.each do |task| %>
+          <% @tasks[:later].each do |task| %>
             <tr class="task">
                <td class="state"><div class="box"><%= task['state'] %></div></td>
                <th class="name <% if task[:state] == '✕' %>canceled<% end %>"><%= task['name'] %></th>

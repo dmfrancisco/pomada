@@ -3,85 +3,56 @@
 require 'sinatra'
 require 'date'
 require 'time'
-require 'json'
+require 'yaml'
+
 
 get '/' do
-  # @today = []
-  #
-  # @today << {
-  #   state: '✔',
-  #   name: 'Actualizar a marca do portal da mobilidade para OneStopTransport (incluindo o logótipo)',
-  #   project: 'TICE Sprint #11',
-  #   pomodoros: 1,
-  #   interrups: 2
-  # }
-  # @today << {
-  #   state: ' ',
-  #   name: 'Suporte para aplicações móveis',
-  #   project: 'TICE Sprint #11',
-  #   pomodoros: 0,
-  #   interrups: 0
-  # }
-  # @today << {
-  #   state: '✕',
-  #   name: 'Actualizar documentação das API\'s JavaScript',
-  #   project: 'TICE Sprint #11',
-  #   pomodoros: 0,
-  #   interrups: 0
-  # }
-  #
-  # @later = []
-  #
-  # @later << {
-  #   state: '✕',
-  #   name: 'Apache Wookie num subdomínio (para que não fique sob o porto 8080 e para seguranças nas framed packaged)',
-  #   project: 'TICE Sprint #11',
-  #   pomodoros: 0,
-  #   interrups: 0
-  # }
-  # @later << {
-  #   state: ' ',
-  #   name: 'Apache Wookie no servidor de produção (em vez de estar só no de testing)',
-  #   project: 'TICE Sprint #11',
-  #   pomodoros: 0,
-  #   interrups: 0
-  # }
-  # @later << {
-  #   state: ' ',
-  #   name: 'Actualizar o Apache Wookie para a nova release',
-  #   project: 'TICE Sprint #11',
-  #   pomodoros: 0,
-  #   interrups: 0
-  # }
-  # @later << {
-  #   state: '✔',
-  #   name: 'Sistema de navegação',
-  #   project: 'Personal',
-  #   pomodoros: 0,
-  #   interrups: 0
-  # }
+  # Get current data from this day
+  data = YAML::load_file "data/state/#{ Date.today.to_s }.yml"
 
-  f = File.open("data/#{ Date.today.to_s }.json", 'r')
-  data = JSON.parse(f.read)
-
-  @today = []
-  data['today'].keys.each do |key|
-    @today << data['today'][key]
-  end
-
-  @later = []
-  data['later'].keys.each do |key|
-    @later << data['later'][key]
-  end
+  # Parse tasks from file
+  @tasks = parse_tasks(data)
 
   erb :hello
 end
 
-post '/save-the-day' do
-  File.open("data/#{ Date.today.to_s }.json", 'w') do |f|
-    f.puts params.to_json
+post '/save-state' do
+  # Save current data for this day
+  File.open("data/state/#{ Date.today.to_s }.yml", 'w') do |f|
+    f.puts params.to_yaml
   end
-  File.open("data/#{ Time.now.to_s }.json", 'w') do |f|
-    f.puts params.to_json
+
+  # Save data in separate files for backup
+  File.open("data/state/tmp/#{ Time.now.to_s }.yml", 'w') do |f|
+    f.puts params.to_yaml
+  end
+end
+
+post '/save-record' do
+  # Save activities done during the day
+  File.open("data/records/#{ Date.today.to_s }.yml", 'w') do |f|
+    f.puts params.to_yaml
+  end
+end
+
+
+helpers do
+  # Parse all tasks from data retrieved from yml file.
+  # This is necessary because JSON treats arrays differently
+  # Instead of [1, 2] we have {'0': 1, '1': 2}
+  def parse_tasks(data)
+    tasks = {}
+
+    tasks[:today] = []
+    data['today'].keys.each do |key|
+      tasks[:today] << data['today'][key]
+    end
+
+    tasks[:later] = []
+    data['later'].keys.each do |key|
+      tasks[:later] << data['later'][key]
+    end
+
+    return tasks
   end
 end

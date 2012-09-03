@@ -169,7 +169,7 @@ $('#save-data').click ->
         'today': today,
         'later': later
     }
-    $.post('/save-the-day', tasks)
+    $.post('/save-state', tasks)
 
 $('#save-and-clean-data').click ->
     $('#save-data').trigger('click')

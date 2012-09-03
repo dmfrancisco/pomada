@@ -9,7 +9,6 @@ GEM
     execjs (1.4.0)
       multi_json (~> 1.0)
     hike (1.2.1)
-    json (1.7.5)
     less (2.2.1)
       commonjs (~> 0.2.6)
     libv8 (3.3.10.4)
@@ -35,7 +34,6 @@ PLATFORMS
 
 DEPENDENCIES
   coffee-script
-  json
   less
   sinatra
   sprockets
