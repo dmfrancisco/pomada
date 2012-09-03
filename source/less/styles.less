@@ -1,0 +1,234 @@
+/*
+ *  Main stylesheet for all devices
+ *
+ *  David Francisco - @dmfrancisco - http://dmfranc.com
+ *  Coimbra, Portugal
+ */
+
+@import "reset";
+@import "responsive";
+@import "font-awesome";
+@import url(http://fonts.googleapis.com/css?family=Droid+Sans+Mono);
+
+@bgd-color: #fff;
+@text-color: #191919;
+
+/* Generic styles */
+
+body {
+  color: @text-color;
+  font-size: 12px;
+  line-height: 20px;
+  -webkit-font-smoothing: antialiased; // force anti-aliasing in chrome and safari
+  text-rendering: optimizelegibility;  // improves the handling of kerning pairs and ligatures
+}
+body, button, input[type="text"], input[type="submit"] {
+  font: 12px 'Droid Sans Mono', sans-serif;
+}
+
+
+/* Views */
+
+.trash {
+  display: none;
+}
+
+
+/* Navigation bar */
+
+.pages-wrapper {
+  margin: 50px 50%;
+  text-align: center;
+}
+.pages {
+  margin-left: -200px;
+  width: 400px;
+}
+.pages, .table-menu-wrapper {
+   position: absolute;
+   top: 3em;
+}
+
+
+/* Inputs */
+
+input[type="checkbox"] {
+  position: absolute;
+  left: -999em;
+}
+input[type="checkbox"] + label {
+  cursor: pointer;
+}
+input[type="checkbox"] + label::before {
+  border: 1px solid #e9df6e;
+  padding: 0 3px;
+  margin-right: 10px;
+  content: "✔";
+  color: #191919;
+}
+input[type="checkbox"]:checked + label::before {
+  color: #e9df6e;
+}
+input[type="text"] {
+  padding: 6px 8px;
+}
+input[type="submit"] {
+  cursor: pointer;
+}
+
+.box {
+  float: left;
+  border: 1px solid #191919;
+  color: #191919;
+  width: 14px;
+  height: 16px;
+  text-align: center;
+  padding: 3px 4px 3px 5px;
+  line-height: 1;
+  font-size: 15px;
+  cursor: pointer;
+  border-radius: 2px;
+  font-weight: bolder;
+}
+
+
+/* Badges */
+
+[data-counter]:after {
+  content: attr(data-counter);
+  position: absolute;
+  top: -12px;
+  right: 20px;
+  padding: 0 6px;
+  border-radius: 100px;
+  background: red;
+  background-clip: padding-box;
+  font-weight: bold;
+  color: white;
+  text-decoration: none;
+}
+
+
+/* Other improvements */
+
+li.selected { border: 1px solid red; }
+
+
+/* Tables */
+
+table tbody tr.task {
+  a, a:visited, a:hover {
+    color: @text-color;
+    text-decoration: none;
+  }
+
+  td, th {
+    vertical-align: middle;
+    background: #eee;
+    border-bottom: 1px solid @bgd-color;
+    border-top: 1px solid @bgd-color;
+  }
+  .state {
+    width: 20px;
+  }
+  .name {
+    text-align: left;
+  }
+  .project {
+    color: #ccc;
+    min-width: 110px;
+  }
+  .pomodoros {
+    width: 55px;
+
+    div:first-child {
+      margin-right: 5px;
+    }
+  }
+  .timer {
+    text-align: left;
+    width: 115px;
+    .start i {
+      min-width: 9px;
+    }
+  }
+
+  &.selected {
+    border-left: 1px solid grey;
+  }
+  .canceled {
+    text-decoration: line-through;
+  }
+}
+
+
+/* Responsive tables plugin */
+
+.table-wrapper {
+   position: relative;
+   margin: 8em 3em 3em;
+  -webkit-user-select: none;
+}
+.table-menu {
+   position: absolute;
+   color: #e9df6e;
+   background: #191919;
+   padding: 10px;
+   width: 12em;
+   right: 0;
+   left: auto;
+   border-radius: 2px;
+  -webkit-user-select: none;
+}
+.table-menu-hidden {
+   left: -999em;
+   right: auto;
+}
+.table-menu-btn, .btn {
+  text-decoration: none;
+  background: #191919;
+  color: #e9df6e;
+  padding: 8px 20px;
+  border-radius: 2px;
+  -webkit-user-select: none;
+  font-weight: bold;
+  border: none;
+}
+.table-menu li {
+  padding: .3em 0;
+}
+.table-menu-wrapper {
+  right: 3em;
+}
+table {
+  width: 100%;
+}
+th, td {
+  padding: .5em 1em;
+  text-align: right;
+}
+th:first-child,
+td:first-child {
+  text-align: left;
+}
+.enhanced th,
+.enhanced td {
+  display: none;
+
+  &.essential {
+    display: table-cell;
+  }
+}
+
+
+/* Custom trash can button */
+
+.trash {
+  float: right;
+  font-size: 16px;
+  -webkit-font-smoothing: none;
+
+  [class^="icon-"], [class*=" icon-"] {
+    color: #ccc;
+  }
+}

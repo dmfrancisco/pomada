@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<!--[if lt IE 7 ]> <html lang="en" class="ie6 oldie"> <![endif]-->
+<!--[if IE 7 ]>    <html lang="en" class="ie7 oldie"> <![endif]-->
+<!--[if IE 8 ]>    <html lang="en" class="ie8 oldie"> <![endif]-->
+<!--[if IE 9 ]>    <html lang="en" class="ie9">       <![endif]-->
+<!--[if (gt IE 9)|!(IE)]><!--> <html lang="en"> <!--<![endif]-->
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1">
+
+  <title>pomada</title>
+  <link rel="shortcut icon" href="favicon.png" />
+
+  <link rel="stylesheet" href="/assets/styles.css" />
+</head>
+
+<body>
+  <div class="pages-wrapper">
+    <div class="pages">
+      <a class="btn page" id="today-page"   href="#">Today</a>
+      <a class="btn page" id="later-page"   href="#">Activity Inventory</a>
+      <a class="btn page" id="records-page" href="#" -data-counter="8">Records</a>
+    </div>
+  </div>
+
+  <div class="table-wrapper">
+    <table cellspacing="0" id="today-tasks" class="sortable">
+       <thead style="display:none">
+          <tr>
+             <th class="essential">State</th>
+             <th class="persist essential">Task</th>
+             <th class="optional">Project</th>
+             <th class="optional">Pomodoros</th>
+             <th class="optional">Track</th>
+          </tr>
+       </thead>
+       <tbody>
+          <% @today.each do |task| %>
+            <tr class="task">
+               <td class="state"><div class="box"><%= task['state'] %></div></td>
+               <th class="name <% if task[:state] == '✕' %>canceled<% end %>"><%= task['name'] %></th>
+               <td class="project"><%= task['project'] %></td>
+
+               <td class="pomodoros">
+                 <div class="box pomodoro-counter"><%= task['pomodoros'] %></div>
+                 <div class="box interrup-counter"><%= task['interrups'] %></div>
+               </td>
+               <td class="timer">
+                 <div class="track">
+                   <abbr class="type" title="Timer for a pomodoro">POM</abbr>: <span class="time">25</span> min
+                   <a class="start" href="#"><i class="icon-play"></i></a>
+                   <a class="stop"  href="#"><i class=""></i></a>
+                 </div>
+                 <a class="trash" href="#"><i class="icon-trash"></i></a>
+               </td>
+            </tr>
+          <% end %>
+       </tbody>
+    </table>
+
+    <table cellspacing="0" id="later-tasks" class="sortable">
+       <thead style="display:none">
+          <tr>
+             <th class="essential">State</th>
+             <th class="persist essential">Task</th>
+             <th class="optional">Project</th>
+             <th class="optional">Pomodoros</th>
+             <th class="optional">Track</th>
+          </tr>
+       </thead>
+       <tbody>
+          <% @later.each do |task| %>
+            <tr class="task">
+               <td class="state"><div class="box"><%= task['state'] %></div></td>
+               <th class="name <% if task[:state] == '✕' %>canceled<% end %>"><%= task['name'] %></th>
+               <td class="project"><%= task['project'] %></td>
+
+               <td class="pomodoros">
+                 <div class="box pomodoro-counter"><%= task['pomodoros'] %></div>
+                 <div class="box interrup-counter"><%= task['interrups'] %></div>
+               </td>
+               <td class="timer">
+                 <div class="track">
+                   <abbr class="type" title="Timer for a pomodoro">POM</abbr>: <span class="time">25</span> min
+                   <a class="start" href="#"><i class="icon-play"></i></a>
+                   <a class="stop"  href="#"><i class=""></i></a>
+                 </div>
+                 <a class="trash" href="#"><i class="icon-trash"></i></a>
+               </td>
+            </tr>
+          <% end %>
+       </tbody>
+    </table>
+
+    <br>
+    <br>
+    <br>
+
+    <form id="new-task" style="float:left; margin-top:-10px">
+      <input type="text" name="name" size="50" placeholder="Name" />
+      <input type="text" name="project" placeholder="Project" />
+      <input type="submit" class="btn" value="New task" />
+    </form>
+
+    <div style="float:right">
+      <a class="btn" id="save-and-clean-data" href="#">Log completed</a>
+      <a class="btn" id="save-and-clean-data" href="#">Save <em>&</em> clean</a>
+      <a class="btn" id="save-data" href="#">Save</a>
+    </div>
+  </div>
+
+  <script src="/assets/application.js"></script>
+</body>
+</html>
