@@ -6,10 +6,10 @@
 #
 #
 #= require libs/respond
-#= require libs/jquery
 #= require libs/jquery-ui
 #= require libs/jquery.multisortable
 #= require libs/rwd-table
+#= require libs/jquery.mustache
 #
 
 # Enable drag and drop
@@ -169,7 +169,7 @@ $('#save-data').click ->
         'today': today,
         'later': later
     }
-    $.post('/save-state', tasks)
+    $.post('/save/state', tasks)
 
 $('#save-and-clean-data').click ->
     $('#save-data').trigger('click')
@@ -182,42 +182,37 @@ $('#save-and-clean-data').click ->
 # Create new tasks
 
 $('form#new-task').submit ->
-    name = $(this).find('input[name="name"]').val()
-    project = $(this).find('input[name="project"]').val()
+    $self = $(this)
+    name = $self.find('input[name="name"]').val()
+    project = $self.find('input[name="project"]').val()
 
-    $task = $("<tr class='task'>
-               <td class='state'><div class='box'></div></td>
-               <th class='name'>#{ name }</th>
-               <td class='project'>#{ project }</td>
+    # Retrieve the template for a task (TODO Activate cache)
+    $.get '/templates/task.mustache', (template) ->
+        $task = $.mustache(template, {
+            name: name,
+            project: project,
+            pomodoros: 0,
+            interrups: 0
+        })
 
-               <td class='pomodoros'>
-                 <div class='box pomodoro-counter'>0</div>
-                 <div class='box interrup-counter'>0</div>
-               </td>
-               <td class='timer'>
-                 <abbr class='type' title='Timer for a pomodoro'>POM</abbr>: <span class='time'>25</span> min
-                 <a class='start' href='#'><i class='icon-play'></i></a>
-                 <a class='stop'  href='#'><i class=''></i></a>
-               </td>
-            </tr>")
+        # Append the task to the table
+        $('#later-tasks tbody').append($task)
+        $("#later-tasks").removeClass("enhanced") # FIXME Currently, adding
+        # rows to the table breaks rwd-table, so here i'm disabling it
 
-    $('#later-tasks tbody').append($task)
-    $("#later-tasks").removeClass("enhanced") # FIXME
-
-    # Clear the fields
-    $(this).find('input[name="name"]').val("")
+        # Clear the fields
+        $self.find('input[name="name"]').val("")
 
     return false
 
 
 # Remove tasks
 
-$('.trash').click ->
+$('.trash').on 'click', ->
     $(this).parent().parent().remove()
     return false
 
 showDeleteButton = (e) ->
-    console.log("X")
     if (e.keyCode == 16) # shift
         $('.track').hide()
         $('.trash').show()

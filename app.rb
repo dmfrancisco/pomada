@@ -4,6 +4,12 @@ require 'sinatra'
 require 'date'
 require 'time'
 require 'yaml'
+require 'mustache/sinatra'
+
+
+# Some Mustache-Sinatra configs
+module Views; end
+set :mustache, { :templates => 'views' }
 
 
 get '/' do
@@ -13,10 +19,11 @@ get '/' do
   # Parse tasks from file
   @tasks = parse_tasks(data)
 
-  erb :hello
+  mustache :hello, {}, :tasks => @tasks
 end
 
-post '/save-state' do
+
+post '/save/state' do
   # Save current data for this day
   File.open("data/state/#{ Date.today.to_s }.yml", 'w') do |f|
     f.puts params.to_yaml
@@ -28,10 +35,22 @@ post '/save-state' do
   end
 end
 
-post '/save-record' do
+
+post '/save/record' do
   # Save activities done during the day
   File.open("data/records/#{ Date.today.to_s }.yml", 'w') do |f|
     f.puts params.to_yaml
+  end
+end
+
+
+PUBLIC_TEMPLATES = ['task']
+
+get '/templates/:template.mustache' do
+  # Retrieve partials to render on the client-side
+  # For security reasons, whitelist just the few templates needed
+  if PUBLIC_TEMPLATES.include? params[:template]
+    send_file File.join('.', 'views', "#{ params[:template] }.mustache")
   end
 end
 
