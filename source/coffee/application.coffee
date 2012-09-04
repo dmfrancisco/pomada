@@ -6,7 +6,6 @@
 #
 #
 #= require libs/respond
-#= require libs/jquery-ui
 #= require libs/jquery.multisortable
 #= require libs/rwd-table
 #= require libs/jquery.mustache
@@ -29,6 +28,12 @@ $('#today-tasks tbody, #later-tasks tbody').multisortable({
 
 $('#today-tasks tbody').sortable('option', 'connectWith', '#later-tasks tbody')
 $('#later-tasks tbody').sortable('option', 'connectWith', '#today-tasks tbody')
+
+$('#today-tasks tbody .name, #today-tasks tbody .project, #today-tasks tbody .time').bind 'click', ->
+  $(this).focus()
+$('#later-tasks tbody .name, #later-tasks tbody .project, #later-tasks tbody .time').bind 'click', ->
+  $(this).focus()
+
 
 dragOutToday = (event, ui) ->
     $("#today-tasks .task").hide()
@@ -109,15 +114,27 @@ $('.timer > .type').live 'click', ->
         $(this).siblings(".time").text('25')
     return false
 
+counter = true
+
 $('.start').live 'click', ->
     $(this).find('i').toggleClass('icon-pause')
     $(this).find('i').toggleClass('icon-play')
     $('.stop i').addClass('icon-stop')
+
+    $time = $(this).siblings(".time")
+    count = parseInt($time.text())
+
+    timer = ->
+      count -= 1
+      $time.text(count)
+
+    counter = setInterval(timer, 1000 * 60) # runs every minute
     return false
 
 $('.stop').live 'click', ->
     $(this).find('i').removeClass('icon-stop')
     $('.start i').addClass('icon-play').removeClass('icon-pause')
+    clearInterval(counter)
     return false
 
 $('.pomodoro-counter, .interrup-counter').live 'mousedown', (e) ->
@@ -170,14 +187,26 @@ $('#save-data').click ->
         'later': later
     }
     $.post('/save/state', tasks)
+    return false
 
-$('#save-and-clean-data').click ->
-    $('#save-data').trigger('click')
+$('#log-completed').click ->
+    today = []
     $('#today-tasks tr.task').each ->
-        state = $(this).find('td.state > .box').text()
-        if state == '✔' or state == '✕'
-            $(this).remove()
+        $self = $(this)
+        j = {}
+        j['state']     = $self.find('td.state > .box').text()
+        j['name']      = $self.find('th.name').text()
+        j['project']   = $self.find('td.project').text()
+        j['pomodoros'] = $self.find('td.pomodoros .pomodoro-counter').text()
+        j['interrups'] = $self.find('td.pomodoros .interrup-counter').text()
 
+        if j['state'] == '✔' or j['state'] == '✕'
+            today.push(j)
+            $self.remove()
+
+    $.post('/save/record', { 'record': today })
+    $('#save-data').trigger('click')
+    return false
 
 # Create new tasks
 
