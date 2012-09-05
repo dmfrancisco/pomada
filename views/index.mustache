@@ -1,0 +1,21 @@
+<div class="navbar">
+  <div class="navbar-inner">
+    <a class="btn" href="/today" -data-counter="8">Today</a>
+    <a class="btn" href="/activity-inventory">Activity Inventory</a>
+    <a class="btn" href="/records">Records</a>
+  </div>
+</div>
+
+<div id="main">
+  <section id="today-page" data-role="page">
+    {{> today-page}}
+  </section>
+
+  <section id="activity-inventory-page" data-role="page">
+    {{> activity-inventory-page}}
+  </section>
+  
+  <section id="records-page" data-role="page">
+    {{> records-page}}
+  </section>
+</div>

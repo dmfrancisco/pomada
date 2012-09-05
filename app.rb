@@ -12,17 +12,6 @@ module Views; end
 set :mustache, { :templates => 'views' }
 
 
-get '/' do
-  # Get current data from this day
-  data = YAML::load_file "data/state/#{ Date.today.to_s }.yml"
-
-  # Parse tasks from file
-  @tasks = parse_tasks(data)
-
-  mustache :hello, {}, :tasks => @tasks
-end
-
-
 post '/save/state' do
   # Save current data for this day
   File.open("data/state/#{ Date.today.to_s }.yml", 'w') do |f|
@@ -55,6 +44,18 @@ get '/templates/:template.mustache' do
 end
 
 
+# ** ROOT ROUTE **
+get '/*' do
+  # Get current data from this day
+  data = YAML::load_file "data/state/#{ Date.today.to_s }.yml"
+
+  # Parse tasks from file
+  tasks = parse_tasks(data)
+
+  mustache :index, {}, tasks
+end
+
+
 helpers do
   # Parse all tasks from data retrieved from yml file.
   # This is necessary because JSON treats arrays differently
@@ -62,14 +63,14 @@ helpers do
   def parse_tasks(data)
     tasks = {}
 
-    tasks[:today] = []
+    tasks[:today_tasks] = []
     data['today'].keys.each do |key|
-      tasks[:today] << data['today'][key]
+      tasks[:today_tasks] << data['today'][key]
     end
 
-    tasks[:later] = []
+    tasks[:later_tasks] = []
     data['later'].keys.each do |key|
-      tasks[:later] << data['later'][key]
+      tasks[:later_tasks] << data['later'][key]
     end
 
     return tasks

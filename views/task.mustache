@@ -1,14 +1,18 @@
 <tr class="task">
+  {{! Properties }}
   <td class="state"><div class="box">{{ state }}</div></td>
   <th contenteditable class="name">{{ name }}</th>
   <td contenteditable class="project">{{ project }}</td>
 
-  <td class="pomodoros">
+  {{! Metrics }}
+  <td class="counters">
     <div class="box pomodoro-counter">{{ pomodoros }}</div>
     <div class="box interrup-counter">{{ interrups }}</div>
   </td>
-  <td class="timer">
-    <div class="track">
+
+  {{! Actions }}
+  <td class="actions">
+    <div class="tracker">
       <abbr class="type" title="Timer for a pomodoro">POM</abbr>:
       <span class="time" contenteditable="true">25</span> min
       <a class="start" href="#"><i class="icon-play"></i></a>

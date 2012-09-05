@@ -26,8 +26,18 @@ body, button, input[type="text"], input[type="submit"] {
   font: 12px 'Droid Sans Mono', sans-serif;
 }
 
+#main {
+  position: relative;
+  margin: 8em 3em 3em;
+  -webkit-user-select: none;
+}
+
 
 /* Views */
+
+[data-role="page"] {
+  display: none;
+}
 
 .trash {
   display: none;
@@ -36,15 +46,15 @@ body, button, input[type="text"], input[type="submit"] {
 
 /* Navigation bar */
 
-.pages-wrapper {
+.navbar {
   margin: 50px 50%;
   text-align: center;
 }
-.pages {
+.navbar-inner {
   margin-left: -200px;
   width: 400px;
 }
-.pages, .table-menu-wrapper {
+.navbar-inner, .table-menu-wrapper {
    position: absolute;
    top: 3em;
 }
@@ -140,14 +150,14 @@ table tbody tr.task {
     min-width: 110px;
     -webkit-user-select: text;
   }
-  .pomodoros {
+  .counters {
     width: 55px;
 
     div:first-child {
       margin-right: 5px;
     }
   }
-  .timer {
+  .actions {
     text-align: left;
     width: 115px;
     .start i {
@@ -169,11 +179,6 @@ table tbody tr.task {
 
 /* Responsive tables plugin */
 
-.table-wrapper {
-   position: relative;
-   margin: 8em 3em 3em;
-  -webkit-user-select: none;
-}
 .table-menu {
    position: absolute;
    color: #e9df6e;
@@ -223,6 +228,10 @@ td:first-child {
   &.essential {
     display: table-cell;
   }
+}
+
+table thead {
+  display: none;
 }
 
 

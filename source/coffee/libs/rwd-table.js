@@ -49,29 +49,29 @@
 
          // create the hide/show toggles
          if ( !th.is("." + o.persist) ) {
-	         var toggle = $('<li><input type="checkbox" name="toggle-cols" id="toggle-col-'+i+'" value="'+id+'" /> <label for="toggle-col-'+i+'">'+th.text()+'</label></li>');
+            var toggle = $('<li><input type="checkbox" name="toggle-cols" id="toggle-col-'+i+'" value="'+id+'" /> <label for="toggle-col-'+i+'">'+th.text()+'</label></li>');
 
-	         container.find("ul").append(toggle);
+            container.find("ul").append(toggle);
 
-	         toggle.find("input")
-	            .change(function(){
-	               var input = $(this),
-	                  val = input.val(),
-	                  cols = $("#" + val + ", [headers="+ val +"]");
+            toggle.find("input")
+               .change(function(){
+                  var input = $(this),
+                     val = input.val(),
+                     cols = $("#" + val + ", [headers="+ val +"]");
 
-	               if (input.is(":checked")) { cols.show(); }
-	               else { cols.hide(); };
-	            })
-	            .bind("updateCheck", function(){
-	               if ( th.css("display") == "table-cell" || th.css("display") == "inline" ) {
-	                  $(this).attr("checked", true);
-	               }
-	               else {
-	                  $(this).attr("checked", false);
-	               }
-	            })
-	            .trigger("updateCheck");
-			};
+                  if (input.is(":checked")) { cols.show(); }
+                  else { cols.hide(); };
+               })
+               .bind("updateCheck", function(){
+                  if ( th.css("display") == "table-cell" || th.css("display") == "inline" ) {
+                     $(this).attr("checked", true);
+                  }
+                  else {
+                     $(this).attr("checked", false);
+                  }
+               })
+               .trigger("updateCheck");
+         };
 
       }); // end hdrCols loop
 
@@ -94,23 +94,23 @@
          $('body').append(menuWrapper);
 
          // assign click-to-close event
-			$(document).click(function(e){
-				if ( !$(e.target).is( container ) && !$(e.target).is( container.find("*") ) ) {
-					container.addClass("table-menu-hidden");
-				}
-			});
+         $(document).click(function(e){
+            if ( !$(e.target).is( container ) && !$(e.target).is( container.find("*") ) ) {
+               container.addClass("table-menu-hidden");
+            }
+         });
       };
 
 
    }, // end _create
 
    disable: function() {
-		// TBD
-	},
+      // TBD
+   },
 
-	enable: function() {
-		// TBD
-	}
+   enable: function() {
+      // TBD
+   }
 
   });
 }( jQuery ) );

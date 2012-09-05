@@ -1,0 +1,25 @@
+<table class="sortable tasks">
+  <thead>
+    <tr>
+      <th class="essential">State</th>
+      <th class="persist essential">Task</th>
+      <th class="optional">Project</th>
+      <th class="optional">Pomodoros</th>
+      <th class="optional">Track</th>
+    </tr>
+  </thead>
+  <tbody>
+    {{#today_tasks}}
+      {{> task}}
+    {{/today_tasks}}
+  </tbody>
+</table>
+
+<div class="container-aux">
+  <br><br><br>
+  
+  <div style="float:right">
+    <a href="#" class="btn log-completed">Log completed</a>
+    <a href="#" class="btn save-data">Save</a>
+  </div>
+</div>
