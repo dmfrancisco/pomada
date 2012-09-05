@@ -6,6 +6,33 @@
 #
 
 
+# Change task state
+
+$('.state .box').live 'click', ->
+    if $(this).text() == '✔'
+        $(this).text("✕")
+        $(this).parent().siblings(".name").addClass('canceled')
+    else if $(this).text() == '✕'
+        $(this).text(" ")
+        $(this).parent().siblings(".name").removeClass('canceled')
+    else
+        $(this).text("✔")
+        $(this).parent().siblings(".name").removeClass('canceled')
+    return false
+
+
+# Add and remove pomodoros and interruptions
+
+$('.pomodoro-counter, .interrup-counter').live 'mousedown', (e) ->
+    switch e.which
+        when 1 # Left mouse button pressed
+            $(this).text(parseInt($(this).text()) + 1)
+        when 3 # Right mouse button pressed
+            e.preventDefault()
+            $(this).text(parseInt($(this).text()) - 1)
+    return false
+
+
 # Create new tasks
 
 $('form#new-task').submit ->

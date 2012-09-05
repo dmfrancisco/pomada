@@ -13,7 +13,7 @@
 #= require drag-and-drop
 #= require rwd-tables
 #= require manage-tasks
-#= require actions
+#= require timer
 #= require persistence
 #= require key-events
 #

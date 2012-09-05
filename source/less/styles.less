@@ -8,12 +8,17 @@
 @import "reset";
 @import "responsive";
 @import "font-awesome";
+@import "rwd-tables";
 @import url(http://fonts.googleapis.com/css?family=Droid+Sans+Mono);
+
+
+/* Variables */
 
 @bgd-color: #fff;
 @text-color: #191919;
 
-/* Generic styles */
+
+/* Top-level styles */
 
 body {
   color: @text-color;
@@ -39,10 +44,6 @@ body, button, input[type="text"], input[type="submit"] {
   display: none;
 }
 
-.trash {
-  display: none;
-}
-
 
 /* Navigation bar */
 
@@ -57,6 +58,84 @@ body, button, input[type="text"], input[type="submit"] {
 .navbar-inner, .table-menu-wrapper {
    position: absolute;
    top: 3em;
+}
+
+
+/* Tables */
+
+table thead {
+  display: none;
+}
+table tbody tr.task {
+
+  /* Common styles */
+
+  a, a:visited, a:hover {
+    color: @text-color;
+    text-decoration: none;
+  }
+  td, th {
+    vertical-align: middle;
+    background: #eee;
+    border-bottom: 1px solid @bgd-color;
+    border-top: 1px solid @bgd-color;
+  }
+
+  /* Widths and alignments */
+
+  .state {
+    width: 20px;
+  }
+  .name {
+    text-align: left;
+  }
+  .project {
+    min-width: 110px;
+  }
+  .counters {
+    width: 55px;
+
+    div:first-child {
+      margin-right: 5px;
+    }
+  }
+  .actions {
+    text-align: left;
+    width: 115px;
+    .start i {
+      min-width: 9px;
+    }
+  }
+
+  /* Allow some contents to be editable */
+
+  .name, .project, .actions .time {
+    -webkit-user-select: text;
+  }
+
+  /* Emphasize tracker actions and project name on mouse over */
+
+  .tracker {
+    opacity: 0.2;
+  }
+  &:hover .tracker, &.selected .tracker {
+    opacity: 1;
+  }
+  .project {
+    color: #ccc;
+  }
+  &:hover .project, &.selected .project {
+    color: @text-color;
+  }
+
+  /* More styles */
+
+  &.selected { // The task is selected
+    border-left: 1px solid grey;
+  }
+  .canceled { // The task is canceled
+    text-decoration: line-through;
+  }
 }
 
 
@@ -119,123 +198,7 @@ input[type="submit"] {
 }
 
 
-/* Other improvements */
-
-li.selected { border: 1px solid red; }
-
-
-/* Tables */
-
-table tbody tr.task {
-  a, a:visited, a:hover {
-    color: @text-color;
-    text-decoration: none;
-  }
-
-  td, th {
-    vertical-align: middle;
-    background: #eee;
-    border-bottom: 1px solid @bgd-color;
-    border-top: 1px solid @bgd-color;
-  }
-  .state {
-    width: 20px;
-  }
-  .name {
-    text-align: left;
-    -webkit-user-select: text;
-  }
-  .project {
-    color: #ccc;
-    min-width: 110px;
-    -webkit-user-select: text;
-  }
-  .counters {
-    width: 55px;
-
-    div:first-child {
-      margin-right: 5px;
-    }
-  }
-  .actions {
-    text-align: left;
-    width: 115px;
-    .start i {
-      min-width: 9px;
-    }
-    .time {
-      -webkit-user-select: text;
-    }
-  }
-
-  &.selected {
-    border-left: 1px solid grey;
-  }
-  .canceled {
-    text-decoration: line-through;
-  }
-}
-
-
-/* Responsive tables plugin */
-
-.table-menu {
-   position: absolute;
-   color: #e9df6e;
-   background: #191919;
-   padding: 10px;
-   width: 12em;
-   right: 0;
-   left: auto;
-   border-radius: 2px;
-  -webkit-user-select: none;
-}
-.table-menu-hidden {
-   left: -999em;
-   right: auto;
-}
-.table-menu-btn, .btn {
-  text-decoration: none;
-  background: #191919;
-  color: #e9df6e;
-  padding: 8px 20px;
-  border-radius: 2px;
-  -webkit-user-select: none;
-  font-weight: bold;
-  border: none;
-}
-.table-menu li {
-  padding: .3em 0;
-}
-.table-menu-wrapper {
-  right: 3em;
-}
-table {
-  width: 100%;
-}
-th, td {
-  padding: .5em 1em;
-  text-align: right;
-}
-th:first-child,
-td:first-child {
-  text-align: left;
-}
-.enhanced th,
-.enhanced td {
-  display: none;
-
-  &.essential {
-    display: table-cell;
-  }
-}
-
-table thead {
-  display: none;
-}
-
-
-/* Custom trash can button */
+/* Custom trash button */
 
 .trash {
   float: right;
@@ -245,4 +208,6 @@ table thead {
   [class^="icon-"], [class*=" icon-"] {
     color: #ccc;
   }
+
+  display: none; // Reveal when the shift key is pressed
 }

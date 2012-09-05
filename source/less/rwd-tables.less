@@ -1,0 +1,57 @@
+/*
+ *  Main stylesheet for the responsive tables plugin
+ *
+ *  David Francisco - @dmfrancisco - http://dmfranc.com
+ *  Coimbra, Portugal
+ */
+
+.table-menu {
+   position: absolute;
+   color: #e9df6e;
+   background: @text-color;
+   padding: 10px;
+   width: 12em;
+   right: 0;
+   left: auto;
+   border-radius: 2px;
+  -webkit-user-select: none;
+}
+.table-menu-hidden {
+   left: -999em;
+   right: auto;
+}
+.table-menu-btn, .btn {
+  text-decoration: none;
+  background: @text-color;
+  color: #e9df6e;
+  padding: 8px 20px;
+  border-radius: 2px;
+  -webkit-user-select: none;
+  font-weight: bold;
+  border: none;
+}
+.table-menu li {
+  padding: .3em 0;
+}
+.table-menu-wrapper {
+  right: 3em;
+}
+table {
+  width: 100%;
+}
+th, td {
+  padding: .5em 1em;
+  text-align: right;
+}
+th:first-child,
+td:first-child {
+  text-align: left;
+}
+.enhanced th,
+.enhanced td {
+  display: none;
+
+  &.essential {
+    display: table-cell;
+  }
+}
