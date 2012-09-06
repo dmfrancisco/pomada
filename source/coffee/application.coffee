@@ -46,14 +46,17 @@ Pomada = Sammy '#main', ->
     @get '/today', ->
         $('.navbar a[href="/today"]').addClass("active")
         $('#today-page').show()
+        displayScrollbarHint()
 
     @get '/activity-inventory', ->
         $('.navbar a[href="/activity-inventory"]').addClass("active")
         $('#activity-inventory-page').show()
+        displayScrollbarHint()
 
     @get '/records', ->
         $('.navbar a[href="/records"]').addClass("active")
         $('#records-page').show()
+        displayScrollbarHint()
 
 
 # Start the application
@@ -65,8 +68,7 @@ window.Pomada = Pomada
 
 
 # Show shadow to indicate the user can scroll
-$(window).scroll( ->
-
+displayScrollbarHint = ->
     if $(window).scrollTop() > 50
         $('.top-shadow').css({ 'opacity': 1 })
     else
@@ -76,6 +78,6 @@ $(window).scroll( ->
         $('.bottom-shadow').css({ 'opacity': 1 })
     else
         $('.bottom-shadow').css({ 'opacity': 0 })
-
     return false
-).trigger('scroll')
+
+$(window).scroll(displayScrollbarHint).trigger('scroll')
