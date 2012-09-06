@@ -4,6 +4,9 @@
 #  David Francisco - @dmfrancisco - http://dmfranc.com
 #  Coimbra, Portugal
 #
+#= require libs/jquery.desknoty
+#= require libs/avgrund
+#
 
 
 Timer = { counter: true, $el: true }
@@ -15,11 +18,13 @@ Timer.init = ($el) ->
     Timer.currentCount = Timer.initialCount
     Timer.initialized = true
 
-Timer.start = ->
+Timer.start = (callback) ->
+    # The callback will be called when the timer hits zero
     timer = ->
+        callback() if Timer.currentCount == 0
         Timer.currentCount -= 1
         Timer.$el.text(Timer.currentCount)
-    Timer.counter = setInterval(timer, 1000) # Runs every minute * 60
+    Timer.counter = setInterval(timer, 1000 * 60) # Runs every minute
 
 Timer.stop = ->
     clearInterval Timer.counter
@@ -28,6 +33,25 @@ Timer.reset = ->
     Timer.stop()
     Timer.$el.text Timer.initialCount
     Timer.initialized = false
+
+
+# Desktop notifications
+
+showDesktopNotification = ->
+    $.desknoty({
+        icon:   "/icon.png",
+        title:  "Pomada",
+        body:   "Your time is up!",
+        sticky: true
+    })
+
+if window.webkitNotifications.checkPermission() != 0
+    avgrund.activate()
+    $('.avgrund-popup button[name="yes"]').click ->
+        window.webkitNotifications.requestPermission()
+        avgrund.deactivate()
+    $('.avgrund-popup button[name="no"]').click ->
+        avgrund.deactivate()
 
 
 # Start timer
@@ -42,7 +66,7 @@ $('.start').live 'click', ->
 
     # Initialize and start the timer
     Timer.init($(this).siblings(".time")) unless Timer.initialized
-    Timer.start()
+    Timer.start showDesktopNotification
 
     return false
 

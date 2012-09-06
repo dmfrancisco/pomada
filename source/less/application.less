@@ -5,22 +5,24 @@
  *  Coimbra, Portugal
  */
 
-@import "reset";
+@import "libs/reset";
+@import "libs/font-awesome";
+@import "libs/rwd-tables";
+@import "libs/avgrund";
 @import "responsive";
-@import "font-awesome";
-@import "rwd-tables";
 @import url(http://fonts.googleapis.com/css?family=Droid+Sans+Mono);
 
 
 /* Variables */
 
-@bgd-color: #fff;
+@bgd-color: white;
 @text-color: #191919;
 
 
 /* Top-level styles */
 
 body {
+  background: @bgd-color;
   color: @text-color;
   font-size: 12px;
   line-height: 20px;
@@ -28,7 +30,7 @@ body {
   text-rendering: optimizelegibility;  // improves the handling of kerning pairs and ligatures
 }
 body, button, input[type="text"], input[type="submit"] {
-  font: 12px 'Droid Sans Mono', sans-serif;
+  font: 12px 'Droid Sans Mono', monospace;
 }
 
 #main {
@@ -61,6 +63,24 @@ body, button, input[type="text"], input[type="submit"] {
 }
 
 
+/* Buttons */
+
+.table-menu-btn, .btn, button {
+  text-decoration: none;
+  background: @text-color;
+  color: #e9df6e;
+  padding: 8px 20px;
+  border-radius: 2px;
+  -webkit-user-select: none;
+  font-weight: bold;
+  border: none;
+  cursor: pointer;
+}
+.btn.active {
+  color: white;
+}
+
+
 /* Tables */
 
 table thead {
@@ -76,7 +96,6 @@ table tbody tr.task {
   }
   td, th {
     vertical-align: middle;
-    background: #eee;
     border-bottom: 1px solid @bgd-color;
     border-top: 1px solid @bgd-color;
   }
@@ -131,7 +150,7 @@ table tbody tr.task {
   /* More styles */
 
   &.selected { // The task is selected
-    border-left: 1px solid grey;
+    background-color: #e8efef;
   }
   .canceled { // The task is canceled
     text-decoration: line-through;
@@ -211,3 +230,69 @@ input[type="submit"] {
 
   display: none; // Reveal when the shift key is pressed
 }
+
+
+/* Additional styles for the modal box */
+
+.avgrund-popup {
+  width: 450px;
+  height: 100px;
+  text-align: center;
+  margin-left: -245px;
+}
+
+
+/* Custom scrollbar (from codepen.io) */
+
+::-webkit-scrollbar {
+  width: 12px;
+  background: white;
+}
+::-webkit-scrollbar-track {
+  padding: 2px;
+  box-shadow: inset 2px 0 5px rgba(0,0,0,0.4);
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(0,0,0,0.15);
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(0,0,0,0.8);
+}
+
+
+/* Simple shadows to indicate the user can scroll */
+
+.top-shadow, .bottom-shadow {
+  -webkit-transition: opacity 1s ease-out;
+  opacity: 0;
+}
+.top-shadow:before {
+  content: "";
+  position: fixed;
+  top: -10px;
+  left: -10px;
+  width: 110%;
+  height: 10px;
+  -webkit-box-shadow: 0 0 15px rgba(0, 0, 0, .6);
+  -moz-box-shadow:    0 0 15px rgba(0, 0, 0, .6);
+  -ms-box-shadow:     0 0 15px rgba(0, 0, 0, .6);
+  -o-box-shadow:      0 0 15px rgba(0, 0, 0, .6);
+  box-shadow:         0 0 15px rgba(0, 0, 0, .6);
+  z-index: 100;
+}
+.bottom-shadow:after {
+  content: "";
+  position: fixed;
+  bottom: -10px;
+  left: -10px;
+  width: 110%;
+  height: 10px;
+  -webkit-box-shadow: 0 0 20px rgba(0, 0, 0, .7);
+  -moz-box-shadow:    0 0 20px rgba(0, 0, 0, .7);
+  -ms-box-shadow:     0 0 20px rgba(0, 0, 0, .7);
+  -o-box-shadow:      0 0 20px rgba(0, 0, 0, .7);
+  box-shadow:         0 0 20px rgba(0, 0, 0, .7);
+  z-index: 100;
+}
+
+@import "print";
