@@ -5,7 +5,6 @@
 #  Coimbra, Portugal
 #
 #= require libs/jquery.desknoty
-#= require libs/avgrund
 #
 
 

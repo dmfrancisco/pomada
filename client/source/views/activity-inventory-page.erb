@@ -9,17 +9,21 @@
     </tr>
   </thead>
   <tbody>
-    {{#today_tasks}}
-      {{> task}}
-    {{/today_tasks}}
+    <%# Activity Inventory tasks will be inserted here %>
   </tbody>
 </table>
 
 <div class="container-aux tools">
   <br><br><br>
   
+  <form id="new-task" style="float:left; margin-top:-8px">
+    <input type="text" name="name" size="50" placeholder="Name" />
+    <input type="text" name="project" placeholder="Project" />
+    <input type="submit" class="btn" value="New task" />
+  </form>
+  
   <div style="float:right">
-    <a href="#" class="btn log-completed">Log completed</a>
     <a href="#" class="btn save-data">Save</a>
   </div>
+  <br>
 </div>

@@ -1,18 +1,20 @@
 # encoding: UTF-8
 
-require 'sinatra'
 require 'date'
 require 'time'
 require 'yaml'
-require 'mustache/sinatra'
 
 
-# Some Mustache-Sinatra configs
-module Views; end
-set :mustache, { :templates => 'views' }
+get '/state' do
+  # Get current data from this day
+  data = YAML::load_file "data/state/#{ Date.today.to_s }.yml"
+
+  # Parse tasks from file
+  tasks = parse_tasks(data)
+end
 
 
-post '/save/state' do
+post '/state' do
   # Save current data for this day
   File.open("data/state/#{ Date.today.to_s }.yml", 'w') do |f|
     f.puts params.to_yaml
@@ -25,34 +27,11 @@ post '/save/state' do
 end
 
 
-post '/save/record' do
+post '/record' do
   # Save activities done during the day
   File.open("data/records/#{ Date.today.to_s }.yml", 'w') do |f|
     f.puts params.to_yaml
   end
-end
-
-
-PUBLIC_TEMPLATES = ['task']
-
-get '/templates/:template.mustache' do
-  # Retrieve partials to render on the client-side
-  # For security reasons, whitelist just the few templates needed
-  if PUBLIC_TEMPLATES.include? params[:template]
-    send_file File.join('.', 'views', "#{ params[:template] }.mustache")
-  end
-end
-
-
-# ** ROOT ROUTE **
-get '/*' do
-  # Get current data from this day
-  data = YAML::load_file "data/state/#{ Date.today.to_s }.yml"
-
-  # Parse tasks from file
-  tasks = parse_tasks(data)
-
-  mustache :index, {}, tasks
 end
 
 

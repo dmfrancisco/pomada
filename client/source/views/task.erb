@@ -1,16 +1,16 @@
 <tr class="task">
-  {{! Properties }}
+  <%# Properties %>
   <td class="state"><div class="box">{{ state }}</div></td>
   <th contenteditable class="name">{{ name }}</th>
   <td contenteditable class="project">{{ project }}</td>
 
-  {{! Metrics }}
+  <%# Metrics %>
   <td class="counters">
     <div class="box pomodoro-counter">{{ pomodoros }}</div>
     <div class="box interrup-counter">{{ interrups }}</div>
   </td>
 
-  {{! Actions }}
+  <%# Actions %>
   <td class="actions">
     <div class="tracker">
       <abbr class="type">TYP</abbr>:

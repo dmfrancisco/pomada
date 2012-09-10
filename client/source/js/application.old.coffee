@@ -10,6 +10,9 @@
 #= require libs/rwd-table
 #= require libs/jquery.mustache
 #= require libs/sammy-latest.min
+#= require libs/underscore.min
+#= require libs/backbone.min
+#= require libs/backbone-localstorage
 #= require drag-and-drop
 #= require rwd-tables
 #= require manage-tasks
