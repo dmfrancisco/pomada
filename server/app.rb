@@ -1,16 +1,39 @@
 # encoding: UTF-8
 
+require 'sinatra'
+require 'sinatra/cross_origin'
 require 'date'
 require 'time'
 require 'yaml'
+require 'json'
 
 
-get '/state' do
+# Enable cross origin requests
+configure do
+  enable :cross_origin
+  set :allow_origin, :any # TODO
+end
+
+
+get '/today/tasks' do
+  puts "Fetching today's tasks..."
+
   # Get current data from this day
-  data = YAML::load_file "data/state/#{ Date.today.to_s }.yml"
+  data = YAML::load_file "data/today.yml"
 
-  # Parse tasks from file
-  tasks = parse_tasks(data)
+  # Parse tasks retrieved from file and convert them to json
+  return parse_tasks(data['today']).to_json
+end
+
+
+get '/activity-inventory/tasks' do
+  puts "Fetching activity inventory tasks..."
+
+  # Get current data from the activity inventory
+  data = YAML::load_file "data/activity-inventory.yml"
+
+  # Parse tasks retrieved from file and convert them to json
+  return parse_tasks(data['activity-inventory']).to_json
 end
 
 
@@ -38,18 +61,12 @@ end
 helpers do
   # Parse all tasks from data retrieved from yml file.
   # This is necessary because JSON treats arrays differently
-  # Instead of [1, 2] we have {'0': 1, '1': 2}
+  # Instead of [1, 2] we have { '0': 1, '1': 2 } # FIXME
   def parse_tasks(data)
-    tasks = {}
+    tasks = []
 
-    tasks[:today_tasks] = []
-    data['today'].keys.each do |key|
-      tasks[:today_tasks] << data['today'][key]
-    end
-
-    tasks[:later_tasks] = []
-    data['later'].keys.each do |key|
-      tasks[:later_tasks] << data['later'][key]
+    data.keys.each do |key|
+      tasks << data[key]
     end
 
     return tasks

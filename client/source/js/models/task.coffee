@@ -1,0 +1,33 @@
+#
+#  Task Model
+#
+#  David Francisco - @dmfrancisco - http://dmfranc.com
+#  Coimbra, Portugal
+#
+#
+#= require libs/md5
+#
+
+window.app = window.app || {} # Allow scripts to be included in any order
+
+
+app.Task = Backbone.GSModel.extend(
+
+  # Default attribute values
+  defaults:
+    state:   ""
+    project: ""
+    name:    ""
+    pomodoros: 0
+    interrups: 0
+    # order: app.Task.nextOrder()
+
+
+  # Custom getters
+  getters:
+    # Task colors are not persisted on the server
+    # Generate a new color based on the project string
+    color: ->
+      return utils.colors.generate @get('project')
+
+)
