@@ -1,17 +1,17 @@
-<nav class="navbar">
+<nav id="navigation-view">
   <%= partial "templates/navigation" %>
 </nav>
 
 <div id="main">
-  <section id="today-view" data-role="page">
+  <section id="today-view" data-role="page" class="hidden">
     <%= partial "templates/today" %>
   </section>
 
-  <section id="activity-inventory-view" data-role="page">
+  <section id="activity-inventory-view" data-role="page" class="hidden">
     <%= partial "templates/activity-inventory" %>
   </section>
 
-  <section id="records-view" data-role="page">
+  <section id="records-view" data-role="page" class="hidden">
     <%= partial "templates/records" %>
   </section>
 </div>

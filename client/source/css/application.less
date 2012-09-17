@@ -41,14 +41,21 @@ body, button, input[type="text"], input[type="submit"] {
 
 /* Views */
 
-[data-role="page"] {
-  display: none;
+.hidden {
+  // Use visibility instead of display in order to
+  // make parent hidden but children still visible
+  // (useful for example to drag tasks between tabs)
+  visibility: hidden;
+  position: absolute !important;
+  top: 0; left: 0;
+  height: 10px !important;
+  overflow: hidden;
 }
 
 
 /* Navigation bar */
 
-.navbar {
+#navigation-view {
   margin: 50px 50%;
   text-align: center;
 }
@@ -92,6 +99,9 @@ table tbody tr.task {
   a, a:visited, a:hover {
     color: @text-color;
     text-decoration: none;
+  }
+  td:first-child {
+    border-left: 1px solid white;
   }
   td, th {
     vertical-align: middle;

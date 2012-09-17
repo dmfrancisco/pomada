@@ -17,6 +17,11 @@ ActivityInventoryTaskList = Backbone.Collection.extend(
   # Reference its location on the server
   url: 'http://localhost:9292/activity-inventory/tasks'
 
+
+  # Todos are sorted by their original insertion order.
+  comparator: (task) ->
+    task.get('order')
+
 )
 
 

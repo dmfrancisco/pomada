@@ -20,7 +20,6 @@ app.Task = Backbone.GSModel.extend(
     name:    ""
     pomodoros: 0
     interrups: 0
-    # order: app.Task.nextOrder()
 
 
   # Custom getters

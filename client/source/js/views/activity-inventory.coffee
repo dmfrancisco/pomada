@@ -8,38 +8,33 @@
 window.app = window.app || {} # Allow scripts to be included in any order
 
 
-ActivityInventoryView = Backbone.View.extend(
+ActivityInventoryView = Backbone.SortableListView.extend(
 
   # Instead of generating a new element, bind to the existing skeleton of
   # the App already present in the HTML.
   el: $("#activity-inventory-view")
+  $sortable: $("#activity-inventory-view .tasks tbody")
 
 
-  # Delegated events for creating new items, and clearing completed ones.
+  # Delegated events for creating new items, and clearing completed ones
   events:
     "submit #new-task": "createTask"
-  #   "click #clear-completed": "clearCompleted"
-  #   "click #toggle-all":      "toggleAllComplete"
 
 
-  initialize: ->
+  initialize: (options) ->
+    # Call parent's constructor
+    @constructor.__super__.initialize.apply this, [options]
+
     # Bind to relevant events
-    app.activityInventoryTasks.on "add",   @addOne, this
-    app.activityInventoryTasks.on "reset", @addAll, this
+    @collection.on "add",   @addOne, this
+    @collection.on "reset", @addAll, this
+    @collection.on "add reset", @refreshSortable, this
 
     # Fetch existing tasks
-    app.activityInventoryTasks.fetch()
+    @collection.fetch()
 
     # Cache jQuery DOM elements
     @$form = @$el.find("form")
-
-    # @allCheckbox = @$("#toggle-all")[0]
-    # Tasks.on "add",   @addOne, this
-    # Tasks.on "reset", @addAll, this
-    # Tasks.on "all",   @render, this
-    # @footer = @$("footer")
-    # @main = $("#main")
-    # Tasks.fetch()
 
 
   # Add a single task to the list by creating a view for it,
@@ -51,38 +46,25 @@ ActivityInventoryView = Backbone.View.extend(
 
   # Add all items in the today tasks collection at once
   addAll: ->
-    app.activityInventoryTasks.each @addOne
+    @collection.each @addOne
 
 
   # If you hit return in the main input field, create a new task
   createTask: (e) ->
     e.preventDefault()
-    
+
     $nameInput = @$form.find("input[name='name']")
     $projectInput = @$form.find("input[name='project']")
 
     # A task must have a name
     return unless $nameInput.val()
 
-    app.activityInventoryTasks.create {
+    @collection.create {
       name:    $nameInput.val()
       project: $projectInput.val()
     }
     $nameInput.val ""
     $projectInput.val ""
-
-
-  # Clear all done tasks, destroying their models.
-  # clearCompleted: ->
-  #   _.each Tasks.done(), (task) ->
-  #     task.clear()
-  #   return false
-
-
-  # toggleAllComplete: ->
-  #   done = @allCheckbox.checked
-  #   Tasks.each (task) ->
-  #     task.save done: done
 
 )
 
@@ -91,4 +73,4 @@ ActivityInventoryView = Backbone.View.extend(
 _.extend(ActivityInventoryView.prototype, app.Mixins.ManageableView)
 
 
-app.activityInventoryView = new ActivityInventoryView()
+app.activityInventoryView = new ActivityInventoryView({ collection : app.activityInventoryTasks })

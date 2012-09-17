@@ -13,7 +13,7 @@ window.app = window.app || {} # Allow scripts to be included in any order
 _.templateSettings = { interpolate: /\{\{(.+?)\}\}/g }
 
 
-app.TaskView = Backbone.View.extend(
+app.TaskView = Backbone.SortableItemView.extend(
 
   tagName:   "tr"
   className: "task"
@@ -24,12 +24,13 @@ app.TaskView = Backbone.View.extend(
 
 
   # The DOM events specific to a task
-  # events:
-  #   "click .toggle":   "toggleDone"
-  #   "dblclick .view":  "edit"
-  #   "click a.destroy": "clear"
-  #   "keypress .edit":  "updateOnEnter"
-  #   "blur .edit":      "close"
+  events:
+    "drop": "sort"
+    # "click .toggle":   "toggleDone"
+    # "dblclick .view":  "edit"
+    # "click a.destroy": "clear"
+    # "keypress .edit":  "updateOnEnter"
+    # "blur .edit":      "close"
 
 
   # The TaskView listens for changes to its model, re-rendering. Since there's
@@ -37,12 +38,27 @@ app.TaskView = Backbone.View.extend(
   # app, we set a direct reference on the model for convenience
   initialize: ->
     @model.on "change", @render, this
-    @model.on "destroy", @remove, this
+    @model.on "destroy", @remove, this # Remove the view from the DOM
+
+    # Enable the contentEditable control
+    # (this is necessary to override the jquery sortable default behavior)
+    @$el.find('.name, .project, .time').live 'click', ->
+      $(this).focus()
+
+    # Unselect tasks when the escape key is pressed
+    $(document).keyup (e) ->
+      if e.keyCode == 27
+        $('.selected').removeClass('selected')
 
 
   render: ->
     @$el.html @template(@model.toJSON())
-    @$el.css { 'background': @model.get('color') }
+    @$el.children("td:first").css { 'border-left-color': @model.get('color') }
+
+    # Add the cid to the DOM. This is an hack for the multisortable plugin. The data
+    # attribute is not stored on the element by jQuery. It's actually stored in $.cache.
+    @$el.data 'cid', @model.cid
+
     return this
 
 
@@ -72,6 +88,6 @@ app.TaskView = Backbone.View.extend(
 
   # Remove the item, destroy the model
   clear: ->
-    @model.clear()
+    @model.destroy()
 
 )

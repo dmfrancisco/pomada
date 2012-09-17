@@ -8,28 +8,33 @@
 window.app = window.app || {} # Allow scripts to be included in any order
 
 
-TodayView = Backbone.View.extend(
+TodayView = Backbone.SortableListView.extend(
 
   el: $("#today-view")
+  $sortable: $("#today-view .tasks tbody")
 
 
   # At initialization we bind to the relevant events on the TodayTasks
   # collection, when items are added or changed. Kick things off by
   # loading any existing tasks that might exist
-  initialize: ->
+  initialize: (options) ->
+    # Call parent's constructor
+    @constructor.__super__.initialize.apply this, [options]
+
     # Bind to relevant events
-    app.todayTasks.on "add",   @addOne, this
-    app.todayTasks.on "reset", @addAll, this
+    @collection.on "add",   @addOne, this
+    @collection.on "reset", @addAll, this
+    @collection.on "add reset", @refreshSortable, this
 
     # Fetch existing tasks
-    app.todayTasks.fetch()
+    @collection.fetch()
 
 
   # Add a single task to the list by creating a view for it,
   # and appending its element to the list
   addOne: (task) ->
-    view = new app.TaskView(model: task)
-    $("#today-view tbody").append view.render().el # FIXME
+    taskView = new app.TaskView(model: task)
+    $("#today-view tbody").append taskView.render().el
 
 
   # Add all items in the today tasks collection at once
@@ -43,4 +48,4 @@ TodayView = Backbone.View.extend(
 _.extend(TodayView.prototype, app.Mixins.ManageableView)
 
 
-app.todayView = new TodayView()
+app.todayView = new TodayView({ collection : app.todayTasks })
