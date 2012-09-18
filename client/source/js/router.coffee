@@ -11,17 +11,11 @@ window.app = window.app || {} # Allow scripts to be included in any order
 TaskRouter = Backbone.Router.extend(
 
   routes:
-    "":                   "root",
-    "today":              "today",
-    "activity-inventory": "activityInventory",
+    "today":              "today"
+    "activity-inventory": "activityInventory"
     "records":            "records"
+    "*action":            "defaultRoute"
 
-
-  # The root url redirects to the today page
-  # The trigger option calls the route function
-  # The replace option updates the URL without creating an entry in browser's history
-  root: ->
-    app.taskRouter.navigate('today', { trigger: true, replace: true })
 
   today: ->
     console.log "Visiting today"
@@ -34,6 +28,13 @@ TaskRouter = Backbone.Router.extend(
   records: ->
     console.log "Visiting records"
     app.regionManager.show(app.recordsView)
+
+
+  # The root url redirects to the today page
+  # The trigger option calls the route function
+  # The replace option updates the URL without creating an entry in browser's history
+  defaultRoute: (action) ->
+    app.taskRouter.navigate('today', { trigger: true, replace: true })
 
 )
 

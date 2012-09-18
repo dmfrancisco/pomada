@@ -16,6 +16,7 @@
 
 @bgd-color: white;
 @text-color: #191919;
+@primary-color: #e9df6e;
 
 
 /* Top-level styles */
@@ -33,7 +34,6 @@ body, button, input[type="text"], input[type="submit"] {
 }
 
 #main {
-  position: relative;
   margin: 8em 3em 3em;
   -webkit-user-select: none;
 }
@@ -46,8 +46,6 @@ body, button, input[type="text"], input[type="submit"] {
   // make parent hidden but children still visible
   // (useful for example to drag tasks between tabs)
   visibility: hidden;
-  position: absolute !important;
-  top: 0; left: 0;
   height: 10px !important;
   overflow: hidden;
 }
@@ -56,26 +54,37 @@ body, button, input[type="text"], input[type="submit"] {
 /* Navigation bar */
 
 #navigation-view {
-  margin: 50px 50%;
-  text-align: center;
+  margin: 0;
+  width: 100%;
+
+  .container {
+    &.centered {
+      top: 40px;
+      left: 50%;
+      text-align: center;
+      position: absolute;
+      .inner {
+        margin-left: -200px;
+        width: 400px;
+      }
+    }
+    &.right {
+      top: 41px;
+      right: 3em;
+      position: absolute;
+    }
+  }
 }
-.navbar-inner {
-  margin-left: -200px;
-  width: 400px;
-}
-.navbar-inner, .table-menu-wrapper {
-   position: absolute;
-   top: 3em;
-}
+
 
 
 /* Buttons */
 
-.table-menu-btn, .btn, button {
+.btn, button {
   text-decoration: none;
   background: @text-color;
-  color: #e9df6e;
-  padding: 8px 20px;
+  color: @primary-color;
+  padding: 8px 20px 10px;
   border-radius: 2px;
   -webkit-user-select: none;
   font-weight: bold;
@@ -84,6 +93,25 @@ body, button, input[type="text"], input[type="submit"] {
 }
 .btn.active {
   color: white;
+}
+.btn-secondary {
+  border: 1px solid #ccc;
+  color: #ccc;
+  background: white;
+  &:hover {
+    border-color: @text-color;
+    color: @text-color;
+  }
+}
+.btn.coffee {
+  margin-top: 1px;
+  padding: 9px 16px 9px;
+  fill: @primary-color;
+}
+.btn.help {
+  margin-top: -18px;
+  padding: 3px 14px 5px;
+  font-size: 16px;
 }
 
 
@@ -100,6 +128,7 @@ table tbody tr.task {
     color: @text-color;
     text-decoration: none;
   }
+
   td:first-child {
     border-left: 1px solid white;
   }
@@ -177,14 +206,14 @@ input[type="checkbox"] + label {
   cursor: pointer;
 }
 input[type="checkbox"] + label::before {
-  border: 1px solid #e9df6e;
+  border: 1px solid @primary-color;
   padding: 0 3px;
   margin-right: 10px;
   content: "✔";
   color: #191919;
 }
 input[type="checkbox"]:checked + label::before {
-  color: #e9df6e;
+  color: @primary-color;
 }
 input[type="text"] {
   padding: 6px 8px;
@@ -289,6 +318,52 @@ input[type="submit"] {
 }
 ::-webkit-scrollbar-thumb:hover {
   background: rgba(0,0,0,0.8);
+}
+
+
+/* Gauge timer */
+
+.timer {
+  position: absolute;
+  top: 50%;
+  right: 50%;
+  height: 500px;
+  width: 300px;
+  margin: -150px -150px 0 0;
+
+  p, span {
+    font-weight: bold;
+    text-align: center;
+    font-size: 18px;
+  }
+  a, a:visited, a:hover {
+    color: @text-color;
+    text-decoration: none;
+  }
+}
+
+
+/* Overlays */
+
+.overlay {
+  position: fixed;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  z-index: 1;
+  background: rgba(255, 255, 255, 0.8);
+}
+
+
+/* Effects */
+
+.blur {
+  -webkit-filter: blur(1px);
+     -moz-filter: blur(1px);
+      -ms-filter: blur(1px);
+       -o-filter: blur(1px);
+          filter: blur(1px);
 }
 
 

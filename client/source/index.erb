@@ -15,3 +15,16 @@
     <%= partial "templates/records" %>
   </section>
 </div>
+
+<div class="overlay" style="display:none">
+  <div class="timer">
+    <canvas class="gauge" width="300" height="300"></canvas>
+    <p><a href="#">+<span class="counter">1</span> pomodoro</a></p>
+  </div>
+</div>
+
+<%# Client-side templates %>
+
+<script type="text/template" id="task-template">
+  <%= partial "templates/task" %>
+</script>
