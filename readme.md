@@ -1,7 +1,7 @@
 # To install dependencies and run the Pomada Sync Server
 
     bundle
-    ruby app.rb
+    ruby app.rb -p 9292
 
 # To build the Pomada Client from source
 

@@ -11,50 +11,79 @@ require 'json'
 # Enable cross origin requests
 configure do
   enable :cross_origin
-  set :allow_origin, :any # TODO
+
+  # Comma separate list of remote hosts that are allowed
+  set :allow_origin, :any
+
+  # HTTP methods allowed
+  # set :allow_methods, [:get, :post]
+
+  # Allow cookies to be sent with the requests
+  # set :allow_credentials, true
 end
 
 
+# Fetching today's tasks
 get '/today/tasks' do
-  puts "Fetching today's tasks..."
+  data = YAML::load_file("data/today.yml").to_json
+end
 
-  # Get current data from this day
+
+# Saving tasks for today
+post '/today/tasks' do
   data = YAML::load_file "data/today.yml"
 
-  # Parse tasks retrieved from file and convert them to json
-  return parse_tasks(data['today']).to_json
-end
+  # Append the new data
+  data << JSON.parse request.body.read.to_s
+  data = data.to_yaml
 
-
-get '/activity-inventory/tasks' do
-  puts "Fetching activity inventory tasks..."
-
-  # Get current data from the activity inventory
-  data = YAML::load_file "data/activity-inventory.yml"
-
-  # Parse tasks retrieved from file and convert them to json
-  return parse_tasks(data['activity-inventory']).to_json
-end
-
-
-post '/state' do
-  # Save current data for this day
-  File.open("data/state/#{ Date.today.to_s }.yml", 'w') do |f|
-    f.puts params.to_yaml
+  File.open("data/today.yml", 'w') do |f|
+    f.puts data
   end
 
-  # Save data in separate files for backup
-  File.open("data/state/tmp/#{ Time.now.to_s }.yml", 'w') do |f|
-    f.puts params.to_yaml
+  # Save data also in a separate file for backup
+  File.open("data/backup/today_#{ friendly_time }.yml", 'w') do |f|
+    f.puts data
+  end
+end
+
+
+# Fetching activity inventory tasks
+get '/activity-inventory/tasks' do
+  YAML::load_file("data/activity-inventory.yml").to_json
+end
+
+
+# Saving tasks in the activity inventory
+post '/activity-inventory/tasks' do
+  data = YAML::load_file "data/activity-inventory.yml"
+
+  # Append the new data
+  data << JSON.parse request.body.read.to_s
+  data = data.to_yaml
+
+  File.open("data/activity-inventory.yml", 'w') do |f|
+    f.puts data
+  end
+
+  # Save data also in a separate file for backup
+  File.open("data/backup/activity-inventory_#{ friendly_time }.yml", 'w') do |f|
+    f.puts data
   end
 end
 
 
 post '/record' do
   # Save activities done during the day
-  File.open("data/records/#{ Date.today.to_s }.yml", 'w') do |f|
-    f.puts params.to_yaml
-  end
+  # File.open("data/record/#{ Date.today.to_s }.yml", 'w') do |f|
+  #   f.puts params.to_yaml
+  # end
+end
+
+
+options '*' do
+  # Important to support HTTP OPTIONS request for cross-origin resource sharing
+  response['Access-Control-Allow-Headers'] = 'Content-Type'
 end
 
 
@@ -70,5 +99,10 @@ helpers do
     end
 
     return tasks
+  end
+
+  # Human readable time string
+  def friendly_time(time = DateTime.now)
+    time.strftime("%Y-%m-%d_%I:%M%p")
   end
 end
