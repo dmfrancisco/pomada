@@ -16,60 +16,48 @@ configure do
   set :allow_origin, :any
 
   # HTTP methods allowed
-  # set :allow_methods, [:get, :post]
+  set :allow_methods, [:get, :post, :put]
 
   # Allow cookies to be sent with the requests
   # set :allow_credentials, true
 end
 
 
-# Fetching today's tasks
-get '/today/tasks' do
-  data = YAML::load_file("data/today.yml").to_json
+
+
+
+
+
 end
 
 
-# Saving tasks for today
-post '/today/tasks' do
-  data = YAML::load_file "data/today.yml"
+#
+#  ROUTES
+#
 
-  # Append the new data
-  data << JSON.parse request.body.read.to_s
-  data = data.to_yaml
-
-  File.open("data/today.yml", 'w') do |f|
-    f.puts data
-  end
-
-  # Save data also in a separate file for backup
-  File.open("data/backup/today_#{ friendly_time }.yml", 'w') do |f|
-    f.puts data
-  end
+# Before all gets, posts, and puts for tasks, check if the :list argument is valid
+before '/tasks/:list*' do
+  status 404 unless ['today', 'activity-inventory'].include? params[:list]
 end
 
 
-# Fetching activity inventory tasks
-get '/activity-inventory/tasks' do
-  YAML::load_file("data/activity-inventory.yml").to_json
+# Fetching today's or activity inventory tasks
+get '/tasks/:list' do
+  load_tasks(params[:list]).to_json
 end
 
 
-# Saving tasks in the activity inventory
-post '/activity-inventory/tasks' do
-  data = YAML::load_file "data/activity-inventory.yml"
+# Saving a new task
+post '/tasks/:list' do
+  new_task = JSON.parse request.body.read.to_s
+  save_new_task(params[:list], new_task).to_json # Return task with new ID
+end
 
-  # Append the new data
-  data << JSON.parse request.body.read.to_s
-  data = data.to_yaml
 
-  File.open("data/activity-inventory.yml", 'w') do |f|
-    f.puts data
-  end
-
-  # Save data also in a separate file for backup
-  File.open("data/backup/activity-inventory_#{ friendly_time }.yml", 'w') do |f|
-    f.puts data
-  end
+# Editing a task
+put '/tasks/:list/:id' do
+  edited_task = JSON.parse request.body.read.to_s
+  save_task(params[:list], edited_task).to_json
 end
 
 
@@ -82,24 +70,55 @@ end
 
 
 options '*' do
-  # Important to support HTTP OPTIONS request for cross-origin resource sharing
+  # Support HTTP OPTIONS request for cross-origin resource sharing
   response['Access-Control-Allow-Headers'] = 'Content-Type'
 end
 
 
-helpers do
-  # Parse all tasks from data retrieved from yml file.
-  # This is necessary because JSON treats arrays differently
-  # Instead of [1, 2] we have { '0': 1, '1': 2 } # FIXME
-  def parse_tasks(data)
-    tasks = []
+#
+#  HELPERS
+#
 
-    data.keys.each do |key|
-      tasks << data[key]
+helpers do
+  def load_tasks(listname)
+    # TaskList.get(listname).tasks
+    YAML.load_file("data/#{ listname }.yml")
+  end
+
+
+  def save_tasks(listname, tasks)
+    File.open("data/#{ listname }.yml", 'w') do |out|
+      YAML.dump tasks, out
     end
 
-    return tasks
+    # Save data also in a separate file for backup
+    File.open("data/backup/#{ listname }_#{ friendly_time }.yml", 'w') do |out|
+      YAML.dump tasks, out
+    end
   end
+
+
+  def save_new_task(listname, new_task)
+    tasks = load_tasks(listname)
+
+    new_task['id'] = tasks.length # Set its unique ID
+    tasks << new_task # Append the new data
+
+    save_tasks(listname, tasks)
+    return new_task
+  end
+
+
+  def save_task(listname, edited_task)
+    tasks = load_tasks(listname)
+
+    task = tasks.find { |task| task['id'] == edited_task['id'] }
+    task.merge! edited_task
+
+    save_tasks(listname, tasks)
+    return task
+  end
+
 
   # Human readable time string
   def friendly_time(time = DateTime.now)
