@@ -20,7 +20,7 @@ app.TaskView = Backbone.SortableItemView.extend(
 
 
   # Cache the template function for a single task
-  template: _.template($("#task-template").html())
+  html: $("#task-template").html()
 
 
   # The DOM events specific to a task
@@ -37,7 +37,7 @@ app.TaskView = Backbone.SortableItemView.extend(
   # a one-to-one correspondence between a **Task** and a **TaskView** in this
   # app, we set a direct reference on the model for convenience
   initialize: ->
-    @model.on "change", @render, this
+    self = this
     @model.on "destroy", @remove, this # Remove the view from the DOM
 
     # Enable the contentEditable control
@@ -50,14 +50,19 @@ app.TaskView = Backbone.SortableItemView.extend(
       if e.keyCode == 27
         $('.selected').removeClass('selected')
 
+    _.bindAll(this)
+    @modelBinder = new Backbone.ModelBinder()
+
 
   render: ->
-    @$el.html @template(@model.toJSON())
+    @$el.html @html
     @$el.children("td:first").css { 'border-left-color': @model.get('color') }
 
     # Add the cid to the DOM. This is an hack for the multisortable plugin. The data
     # attribute is not stored on the element by jQuery. It's actually stored in $.cache.
     @$el.data 'cid', @model.cid
+
+    @modelBinder.bind @model, @el, Backbone.ModelBinder.createDefaultBindings(@el, 'data-prop')
 
     return this
 
@@ -84,6 +89,10 @@ app.TaskView = Backbone.SortableItemView.extend(
   # If you hit `enter`, we're through editing the item
   # updateOnEnter: (e) ->
   #   @close()  if e.keyCode is 13
+
+
+  close: ->
+    @modelBinder.unbind()
 
 
   # Remove the item, destroy the model

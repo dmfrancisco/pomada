@@ -18,15 +18,11 @@ TodayTaskList = Backbone.Collection.extend(
   url: 'http://localhost:9292/tasks/today'
 
 
-  # Todos are sorted by their original insertion order.
-  comparator: (task) ->
-    task.get('order')
+  # Elements are sorted by their original insertion order
+  comparator: (element) ->
+    element.get "position"
 
 )
-
-
-# Extend this collection with the OrderedCollection mixin
-_.extend(TodayTaskList.prototype, app.Mixins.OrderedCollection)
 
 
 # Create a global collection of tasks for today

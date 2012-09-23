@@ -4,8 +4,16 @@ require 'sinatra'
 require 'sinatra/cross_origin'
 require 'date'
 require 'time'
-require 'yaml'
 require 'json'
+require 'data_mapper'
+
+
+#
+#  CONFIGURATIONS
+#
+
+# Setup the sqlite database
+DataMapper.setup(:default, "sqlite3://#{ Dir.pwd }/dev.db")
 
 
 # Enable cross origin requests
@@ -23,12 +31,42 @@ configure do
 end
 
 
+#
+#  MODELS
+#
 
+class TaskList
+  include DataMapper::Resource
 
+  property :name, String, :key => true
 
-
-
+  has n, :tasks
 end
+
+class Task
+  include DataMapper::Resource
+
+  property :id,        Serial # An auto-increment integer key
+  property :state,     String
+  property :name,      String
+  property :project,   String
+  property :pomodoros, Integer
+  property :interrups, Integer
+  property :position,  Integer
+  # property :estimate,     Integer # Estimated pomodoros needed to accomplish this task
+  # property :completed_at, DateTime
+
+  belongs_to :task_list
+end
+
+
+# Make the schema match the model
+DataMapper.auto_upgrade!
+
+
+# Seed data
+TaskList.first_or_create(:name => "today")
+TaskList.first_or_create(:name => "activity-inventory")
 
 
 #
@@ -43,29 +81,35 @@ end
 
 # Fetching today's or activity inventory tasks
 get '/tasks/:list' do
-  load_tasks(params[:list]).to_json
+  TaskList.get(params[:list]).tasks.to_json
 end
 
 
 # Saving a new task
 post '/tasks/:list' do
-  new_task = JSON.parse request.body.read.to_s
-  save_new_task(params[:list], new_task).to_json # Return task with new ID
+  new_task = JSON.parse(request.body.read.to_s)
+
+  task = Task.new new_task
+  task.task_list = TaskList.get(params[:list])
+  task.position  = TaskList.get(params[:list]).tasks.count
+  task.save()
+
+  return task.to_json # Return task with new ID
 end
 
 
 # Editing a task
 put '/tasks/:list/:id' do
-  edited_task = JSON.parse request.body.read.to_s
-  save_task(params[:list], edited_task).to_json
+  edited_task = JSON.parse(request.body.read.to_s)
+  edited_task[:task_list_name] = params[:list]
+
+  task = Task.get(edited_task['id'])
+  task.update(edited_task)
 end
 
 
 post '/record' do
   # Save activities done during the day
-  # File.open("data/record/#{ Date.today.to_s }.yml", 'w') do |f|
-  #   f.puts params.to_yaml
-  # end
 end
 
 
@@ -80,48 +124,4 @@ end
 #
 
 helpers do
-  def load_tasks(listname)
-    # TaskList.get(listname).tasks
-    YAML.load_file("data/#{ listname }.yml")
-  end
-
-
-  def save_tasks(listname, tasks)
-    File.open("data/#{ listname }.yml", 'w') do |out|
-      YAML.dump tasks, out
-    end
-
-    # Save data also in a separate file for backup
-    File.open("data/backup/#{ listname }_#{ friendly_time }.yml", 'w') do |out|
-      YAML.dump tasks, out
-    end
-  end
-
-
-  def save_new_task(listname, new_task)
-    tasks = load_tasks(listname)
-
-    new_task['id'] = tasks.length # Set its unique ID
-    tasks << new_task # Append the new data
-
-    save_tasks(listname, tasks)
-    return new_task
-  end
-
-
-  def save_task(listname, edited_task)
-    tasks = load_tasks(listname)
-
-    task = tasks.find { |task| task['id'] == edited_task['id'] }
-    task.merge! edited_task
-
-    save_tasks(listname, tasks)
-    return task
-  end
-
-
-  # Human readable time string
-  def friendly_time(time = DateTime.now)
-    time.strftime("%Y-%m-%d_%I:%M%p")
-  end
 end

@@ -13,6 +13,10 @@ NavigationView = Backbone.View.extend(
   el: $("#navigation-view")
 
 
+  events:
+    "click a": "activate"
+
+
   # If we are dragging a task to the today page, we cannot hide the activity inventory page,
   # otherwise the dragged task would disappear. So, we display the today page and hide everything
   # except the selected tasks from the activity inventory page. (& vice-versa)
@@ -40,6 +44,16 @@ NavigationView = Backbone.View.extend(
       tolerance: 'pointer',
       over: @dragToActivityInventory, # Triggered when the mouse is over the tab
       drop: @dropped # Triggered when the element is dropped
+
+
+    # Make the button which points to the current view active
+    @$el.find("a[href='#{ window.location.hash }']").addClass("active")
+
+
+  activate: ->
+    # Change button state to active on click
+    @$el.find("a").removeClass("active")
+    $(event.srcElement).addClass("active")
 
 )
 

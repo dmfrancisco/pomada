@@ -9,6 +9,9 @@
 #= require libs/underscore.min
 #= require libs/backbone.min
 #= require libs/backbone.getters.setters
+#= require libs/Backbone.ModelBinder.js
+#= require libs/Backbone.ModelBinder.js
+#= require libs/Backbone.CollectionBinder.js
 #
 #= require_directory ./utils
 #= require_directory ./models

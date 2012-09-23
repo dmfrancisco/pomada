@@ -29,4 +29,7 @@ app.Task = Backbone.GSModel.extend(
     color: ->
       return utils.colors.generate @get('project')
 
+  initialize: ->
+    @on "change", @save # Persist data to the server
+
 )

@@ -2,3 +2,5 @@ source :rubygems
 
 gem "sinatra"
 gem "sinatra-cross_origin"
+gem "data_mapper"
+gem "dm-sqlite-adapter"

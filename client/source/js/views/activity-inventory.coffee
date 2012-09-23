@@ -25,9 +25,14 @@ ActivityInventoryView = Backbone.SortableListView.extend(
     # Call parent's constructor
     @constructor.__super__.initialize.apply this, [options]
 
+    # The managerFactory helps to generate element managers
+    # An element manager creates/removes elements when models are added to a collection
+    viewCreator = (model) -> new app.TaskView(model: model)
+    managerFactory = new Backbone.CollectionBinder.ViewManagerFactory(viewCreator)
+    @collectionBinder = new Backbone.CollectionBinder(managerFactory, autoSort: true)
+    @collectionBinder.bind @collection, @$('tbody')
+
     # Bind to relevant events
-    @collection.on "add",   @addOne, this
-    @collection.on "reset", @addAll, this
     @collection.on "add reset", @refreshSortable, this
 
     # Fetch existing tasks
@@ -35,18 +40,6 @@ ActivityInventoryView = Backbone.SortableListView.extend(
 
     # Cache jQuery DOM elements
     @$form = @$el.find("form")
-
-
-  # Add a single task to the list by creating a view for it,
-  # and appending its element to the list
-  addOne: (task) ->
-    view = new app.TaskView(model: task)
-    $("#activity-inventory-view tbody").append view.render().el
-
-
-  # Add all items in the today tasks collection at once
-  addAll: ->
-    @collection.each @addOne
 
 
   # If you hit return in the main input field, create a new task
@@ -63,6 +56,7 @@ ActivityInventoryView = Backbone.SortableListView.extend(
       name:    $nameInput.val()
       project: $projectInput.val()
     }
+
     $nameInput.val ""
     $projectInput.val ""
 

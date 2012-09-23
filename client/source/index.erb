@@ -23,8 +23,12 @@
   </div>
 </div>
 
-<%# Client-side templates %>
-
 <script type="text/template" id="task-template">
   <%= partial "templates/task" %>
+</script>
+
+<script type="text/template" id="empty-task-template">
+  <tr class="empty ui-state-disabled">
+    <td colspan="5">You can drop in tasks</td>
+  </tr>
 </script>

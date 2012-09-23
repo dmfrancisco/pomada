@@ -34,7 +34,7 @@ app.Mixins.ManageableView = {
 Backbone.SortableListView = Backbone.View.extend(
 
   $sortable: $("tbody")
-  items: "tr" # Specifies which items inside the element should be sortable
+  items: "tr:not(.ui-state-disabled)" # Specifies which items inside the element should be sortable
 
 
   # In child views call parent's constructor like this:
@@ -77,6 +77,12 @@ Backbone.SortableListView = Backbone.View.extend(
   refreshSortable: ->
     @$sortable.multisortable 'refresh'
 
+    # If the list becomes empty, add a little placeholder
+    if @$sortable.find("tr").length == 0
+      @$sortable.append($("#empty-task-template").html())
+    else
+      @$sortable.find(".empty").remove()
+
 
   # Connect these elements with another list in
   # order to drag-and-drop elements between both
@@ -95,29 +101,29 @@ Backbone.SortableListView = Backbone.View.extend(
 
     # The following code does not work when dropping multiple elements
     #
-    # oldPosition = model.get('order')
+    # oldPosition = model.get('position')
     #
     # # An element has moved inside the list
     # if not connectedSortable and not _.isUndefined(@collection.getByCid(model.cid))
     #   @collection.remove model, { silent: true }
     #
     #   @collection.each (model) ->
-    #     order = model.get('order')
-    #     model.set('order', order - 1) if oldPosition < order <= newPosition and oldPosition < newPosition
-    #     model.set('order', order + 1) if oldPosition > order >= newPosition and oldPosition > newPosition
+    #     position = model.get('position')
+    #     model.set('position', position - 1) if oldPosition < position <= newPosition and oldPosition < newPosition
+    #     model.set('position', position + 1) if oldPosition > position >= newPosition and oldPosition > newPosition
     #
-    #   model.set('order', newPosition)
+    #   model.set('position', newPosition)
     #   @collection.add model, { silent: true }
     #
     #
     # # An element was dropped from a connected list
     # else if connectedSortable and _.isUndefined(@collection.getByCid(model.cid))
     #   @collection.each (model) ->
-    #     order = model.get('order')
-    #     model.set('order', order + 1) if order >= newPosition
+    #     position = model.get('position')
+    #     model.set('position', position + 1) if position >= newPosition
     #
     #   # We don't want to render since the sortable widget already does it visually
-    #   model.set('order', newPosition)
+    #   model.set('position', newPosition)
     #   @collection.add model, { silent: true }
     #
     #
@@ -126,48 +132,75 @@ Backbone.SortableListView = Backbone.View.extend(
     #   @collection.remove model, { silent: true }
     #
     #   @collection.each (model) ->
-    #     order = model.get('order')
-    #     model.set('order', order - 1) if order >= oldPosition
+    #     position = model.get('position')
+    #     model.set('position', position - 1) if position >= oldPosition
 
 
     # Quick fix to work with multiple elements
     # This is a bad implementation since it relies on the DOM
 
     needsSorting = false
+    persistServer = false
     self = this
 
     # An element has moved inside the list
     if not connectedSortable and not _.isUndefined(@collection.getByCid(model.cid))
       needsSorting = true
 
-    # An element was dropped from a connected list
-    else if connectedSortable and _.isUndefined(@collection.getByCid(model.cid))
+    # An element was dropped out from the list
+    else if connectedSortable and not _.isUndefined(@collection.getByCid(model.cid))
       needsSorting = true
+
+    # An element was dropped from a connected list
+    else if connectedSortable
+      needsSorting  = true
+      persistServer = true
 
       @$el.find('.selected').each ->
         model = self.connectedCollection.getByCid $(this).data('cid')
-        self.collection.add model, { silent: true }
+        modelID = model.get('id')
 
-    # An element was dropped out from the list
-    else if connectedSortable
-      needsSorting = true
+        self.collection.add model.attributes,  silent: true # Don't send data to server
+        self.connectedCollection.remove model, silent: true # and don't add nothing to DOM
 
-      $('.selected').each ->
-        model = self.collection.getByCid $(this).data('cid')
-        self.collection.remove model, { silent: true }
+        # Update model's CID
+        $(this).data 'cid', self.collection.get(modelID).cid
 
     if needsSorting
-      @$el.find(@items).each (index) ->
+      @$sortable.find(@items).each (index) ->
         model = self.collection.getByCid $(this).data('cid')
-        model.set('order', index) if model
+        model.set('position', index) if model
 
       @collection.sort { silent: true }
+
+    # Now that the collection is sorted, send data to the server
+    if persistServer
+      @$el.find('.selected').each ->
+        model = self.collection.getByCid $(this).data('cid')
+        modelID = model.get('id')
+
+        # Remove from the DOM, since adding the model adds a duplicated element to DOM
+        $(this).remove()
+        # removeFromDOM = (model, view) ->
+        #   view.$el.remove()
+        #   self.collectionBinder.off "elCreated", removeFromDOM
+        # self.collectionBinder.on "elCreated", removeFromDOM
+
+        # This will send data to the server and add the new model to the DOM
+        self.collection.remove model
+        self.collection.create model.attributes # "create" adds model and saves to server
+
+        # Update model's CID
+        $(this).data 'cid', self.collection.get(modelID).cid
+
+    if needsSorting
+      @refreshSortable()
 
     # Prints, for debugging
     # console.log ">> #{ JSON.stringify(@collection.toJSON()) }"
     #
-    # @collection.each (model, order) ->
-    #   console.log "Model #{ model.get('name') } has now order #{ model.get('order') }"
+    # @collection.each (model, position) ->
+    #   console.log "Model #{ model.get('name') } has now position #{ model.get('position') }"
 
 )
 

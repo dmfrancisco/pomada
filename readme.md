@@ -5,6 +5,7 @@
 
 # To build the Pomada Client from source
 
+    bundle
     middleman build
 
 # Acknowledgments

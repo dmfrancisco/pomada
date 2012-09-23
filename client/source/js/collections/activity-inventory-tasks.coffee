@@ -18,15 +18,11 @@ ActivityInventoryTaskList = Backbone.Collection.extend(
   url: 'http://localhost:9292/tasks/activity-inventory'
 
 
-  # Todos are sorted by their original insertion order.
-  comparator: (task) ->
-    task.get('order')
+  # Elements are sorted by their original insertion order
+  comparator: (element) ->
+    element.get "position"
 
 )
-
-
-# Extend this collection with the OrderedCollection mixin
-_.extend(ActivityInventoryTaskList.prototype, app.Mixins.OrderedCollection)
 
 
 # Create a global collection of tasks from the activity inventory
