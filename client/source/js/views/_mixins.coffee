@@ -99,43 +99,6 @@ Backbone.SortableListView = Backbone.View.extend(
     newPosition = params[1]
     connectedSortable = params[2]
 
-    # The following code does not work when dropping multiple elements
-    #
-    # oldPosition = model.get('position')
-    #
-    # # An element has moved inside the list
-    # if not connectedSortable and not _.isUndefined(@collection.getByCid(model.cid))
-    #   @collection.remove model, { silent: true }
-    #
-    #   @collection.each (model) ->
-    #     position = model.get('position')
-    #     model.set('position', position - 1) if oldPosition < position <= newPosition and oldPosition < newPosition
-    #     model.set('position', position + 1) if oldPosition > position >= newPosition and oldPosition > newPosition
-    #
-    #   model.set('position', newPosition)
-    #   @collection.add model, { silent: true }
-    #
-    #
-    # # An element was dropped from a connected list
-    # else if connectedSortable and _.isUndefined(@collection.getByCid(model.cid))
-    #   @collection.each (model) ->
-    #     position = model.get('position')
-    #     model.set('position', position + 1) if position >= newPosition
-    #
-    #   # We don't want to render since the sortable widget already does it visually
-    #   model.set('position', newPosition)
-    #   @collection.add model, { silent: true }
-    #
-    #
-    # # An element was dropped out from the list
-    # else if connectedSortable
-    #   @collection.remove model, { silent: true }
-    #
-    #   @collection.each (model) ->
-    #     position = model.get('position')
-    #     model.set('position', position - 1) if position >= oldPosition
-
-
     # Quick fix to work with multiple elements
     # This is a bad implementation since it relies on the DOM
 
@@ -181,10 +144,6 @@ Backbone.SortableListView = Backbone.View.extend(
 
         # Remove from the DOM, since adding the model adds a duplicated element to DOM
         $(this).remove()
-        # removeFromDOM = (model, view) ->
-        #   view.$el.remove()
-        #   self.collectionBinder.off "elCreated", removeFromDOM
-        # self.collectionBinder.on "elCreated", removeFromDOM
 
         # This will send data to the server and add the new model to the DOM
         self.collection.remove model
@@ -195,12 +154,6 @@ Backbone.SortableListView = Backbone.View.extend(
 
     if needsSorting
       @refreshSortable()
-
-    # Prints, for debugging
-    # console.log ">> #{ JSON.stringify(@collection.toJSON()) }"
-    #
-    # @collection.each (model, position) ->
-    #   console.log "Model #{ model.get('name') } has now position #{ model.get('position') }"
 
 )
 

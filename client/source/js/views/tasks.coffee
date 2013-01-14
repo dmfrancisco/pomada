@@ -25,12 +25,12 @@ app.TaskView = Backbone.SortableItemView.extend(
 
   # The DOM events specific to a task
   events:
-    "drop": "sort"
-    # "click .toggle":   "toggleDone"
-    # "dblclick .view":  "edit"
-    # "click a.destroy": "clear"
-    # "keypress .edit":  "updateOnEnter"
-    # "blur .edit":      "close"
+    "drop":              "sort"
+    "click .state .box": "toggleState"
+    "click .trash":      "clear"
+    "mousedown .pomodoro-counter": "setPomodoros"
+    "mousedown .interrup-counter": "setInterrups"
+    "mousedown .estimate-counter": "setEstimate"
 
 
   # The TaskView listens for changes to its model, re-rendering. Since there's
@@ -62,33 +62,47 @@ app.TaskView = Backbone.SortableItemView.extend(
     # attribute is not stored on the element by jQuery. It's actually stored in $.cache.
     @$el.data 'cid', @model.cid
 
+    @$el.find(".name").addClass('canceled') if @model.get('state') == '✕'
+
     @modelBinder.bind @model, @el, Backbone.ModelBinder.createDefaultBindings(@el, 'data-prop')
 
     return this
 
 
   # Toggle the `"done"` state of the model
-  # toggleDone: ->
-  #   @model.toggle()
+  toggleState: (event) ->
+    state = @model.get('state')
+
+    if state == '✔'
+        @model.set("state", "✕")
+        @$el.find(".name").addClass('canceled')
+    else if state == '✕'
+        @model.set("state", " ")
+        @$el.find(".name").removeClass('canceled')
+    else
+        @model.set("state", "✔")
+        @$el.find(".name").removeClass('canceled')
 
 
-  # Switch this view into `"editing"` mode, displaying the input field
-  # edit: ->
-  #   @$el.addClass "editing"
-  #   @input.focus()
+  updateCounter: (attribute, event) ->
+    switch event.which
+      when 1 # Left mouse button pressed
+        @model.set(attribute, @model.get(attribute) + 1)
+      when 3 # Right mouse button pressed
+        event.preventDefault()
+        @model.set(attribute, @model.get(attribute) - 1)
 
 
-  # Close the `"editing"` mode, saving changes to the task
-  # close: ->
-  #   value = @input.val()
-  #   @clear()  unless value
-  #   @model.save title: value
-  #   @$el.removeClass "editing"
+  setPomodoros: (event) ->
+    @updateCounter "pomodoros", event
 
 
-  # If you hit `enter`, we're through editing the item
-  # updateOnEnter: (e) ->
-  #   @close()  if e.keyCode is 13
+  setInterrups: (event) ->
+    @updateCounter "interrups", event
+
+
+  setEstimate: (event) ->
+    @updateCounter "estimate", event
 
 
   close: ->

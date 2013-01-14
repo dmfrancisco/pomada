@@ -50,6 +50,31 @@ body, button, input[type="text"], input[type="submit"] {
   overflow: hidden;
 }
 
+#today-view {
+  .actions {
+    display: none;
+  }
+  .counters {
+    width: 75px;
+  }
+}
+#activity-inventory-view {
+  .counters {
+    width: 30px;
+
+    .delimiter, .pomodoro-counter, .interrup-counter {
+      display: none;
+    }
+  }
+  .actions {
+    width: 15px;
+
+    .trash {
+      display: block;
+    }
+  }
+}
+
 
 /* Navigation bar */
 
@@ -150,15 +175,12 @@ table tbody tr.task {
     min-width: 110px;
   }
   .counters {
-    width: 55px;
-
     div:first-child {
       margin-right: 5px;
     }
   }
   .actions {
     text-align: left;
-    width: 115px;
     .start i {
       min-width: 9px;
     }
@@ -231,7 +253,7 @@ input[type="submit"] {
   float: left;
   border: 1px solid #191919;
   color: #191919;
-  width: 14px;
+  min-width: 14px;
   height: 16px;
   text-align: center;
   padding: 3px 4px 3px 5px;
@@ -240,6 +262,10 @@ input[type="submit"] {
   cursor: pointer;
   border-radius: 2px;
   font-weight: bolder;
+
+  span {
+    font-weight: bolder;
+  }
 }
 
 
@@ -270,8 +296,6 @@ input[type="submit"] {
   [class^="icon-"], [class*=" icon-"] {
     color: #ccc;
   }
-
-  display: none; // Reveal when the shift key is pressed
 }
 
 

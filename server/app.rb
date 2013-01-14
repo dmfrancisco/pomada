@@ -8,13 +8,11 @@ require 'json'
 require 'data_mapper'
 
 
-#
-#  CONFIGURATIONS
+#  Configurations
 #
 
 # Setup the sqlite database
 DataMapper.setup(:default, "sqlite3://#{ Dir.pwd }/dev.db")
-
 
 # Enable cross origin requests
 configure do
@@ -24,15 +22,14 @@ configure do
   set :allow_origin, :any
 
   # HTTP methods allowed
-  set :allow_methods, [:get, :post, :put]
+  set :allow_methods, [:get, :post, :put, :delete]
 
   # Allow cookies to be sent with the requests
   # set :allow_credentials, true
 end
 
 
-#
-#  MODELS
+#  Models
 #
 
 class TaskList
@@ -51,26 +48,23 @@ class Task
   property :name,      String
   property :project,   String
   property :pomodoros, Integer
+  property :estimate,  Integer # Estimated pomodoros needed to accomplish this task
   property :interrups, Integer
   property :position,  Integer
-  # property :estimate,     Integer # Estimated pomodoros needed to accomplish this task
-  # property :completed_at, DateTime
+  property :completed_at, DateTime
 
   belongs_to :task_list
 end
 
-
 # Make the schema match the model
 DataMapper.auto_upgrade!
-
 
 # Seed data
 TaskList.first_or_create(:name => "today")
 TaskList.first_or_create(:name => "activity-inventory")
 
 
-#
-#  ROUTES
+#  Routes
 #
 
 # Before all gets, posts, and puts for tasks, check if the :list argument is valid
@@ -78,12 +72,10 @@ before '/tasks/:list*' do
   status 404 unless ['today', 'activity-inventory'].include? params[:list]
 end
 
-
 # Fetching today's or activity inventory tasks
 get '/tasks/:list' do
   TaskList.get(params[:list]).tasks.to_json
 end
-
 
 # Saving a new task
 post '/tasks/:list' do
@@ -97,7 +89,6 @@ post '/tasks/:list' do
   return task.to_json # Return task with new ID
 end
 
-
 # Editing a task
 put '/tasks/:list/:id' do
   edited_task = JSON.parse(request.body.read.to_s)
@@ -107,21 +98,16 @@ put '/tasks/:list/:id' do
   task.update(edited_task)
 end
 
+# Deleting a task
+delete '/tasks/:list/:id' do
+  Task.get(params['id']).destroy
+end
 
 post '/record' do
   # Save activities done during the day
 end
 
-
 options '*' do
   # Support HTTP OPTIONS request for cross-origin resource sharing
   response['Access-Control-Allow-Headers'] = 'Content-Type'
-end
-
-
-#
-#  HELPERS
-#
-
-helpers do
 end

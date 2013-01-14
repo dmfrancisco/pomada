@@ -5,18 +5,14 @@
 
 <%# Metrics %>
 <td class="counters">
-  <div class="box pomodoro-counter" data-prop="pomodoros"></div>
+  <div class="box">
+    <span class="pomodoro-counter" data-prop="pomodoros">
+    </span><span class="delimiter">/</span><span class="estimate-counter" data-prop="estimate"></span>
+  </div>
   <div class="box interrup-counter" data-prop="interrups"></div>
 </td>
 
 <%# Actions %>
 <td class="actions">
-  <div class="tracker">
-    <abbr class="type">TYP</abbr>:
-    <span class="time" contenteditable="true">25</span> min
-    <a class="start" href="#"><i class="icon-play"></i></a>
-    <a class="pause" href="#" style="display:none"><i class="icon-pause"></i></a>
-    <a class="reset" href="#" style="display:none"><i class="icon-repeat"></i></a>
-  </div>
   <a class="trash" href="#"><i class="icon-trash"></i></a>
 </td>

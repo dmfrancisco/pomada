@@ -1,8 +1,6 @@
 #
-#  Gauge chart for the timer using Canvas and JavaScript (from goo.gl/pAaeN)
-#
-#  David Francisco - @dmfrancisco - http://dmfranc.com
-#  Coimbra, Portugal
+#  Gauge chart for the timer using Canvas and JavaScript
+#  From goo.gl/pAaeN by Ruby On Tails
 #
 
 window.utils = window.utils || {} # Allow scripts to be included in any order
