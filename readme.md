@@ -7,7 +7,7 @@ It contains a demo server written in the Ruby language that uses the [Sinatra](h
 
 The client is fully decoupled from the server. They communicate through a simple REST API. The server supports CORS requests to enable cross-domain communication.
 
-![screenshot](//raw.github.com/dmfrancisco/pomada/master/client/resources/screenshot.jpg "Screenshot")
+![screenshot](https://raw.github.com/dmfrancisco/pomada/master/client/resources/screenshot.jpg "Screenshot")
 
 ---
 
